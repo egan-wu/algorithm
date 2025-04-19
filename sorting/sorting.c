@@ -11,6 +11,7 @@ namespace sort
     const char QUICK_SORT      = '2';
     const char MERGE_SORT      = '3';
     const char INSERTION_SORT  = '4';
+    const char BUCKET_SORT     = '5';
 
     const char ASCENDING   = '1';
     const char DESCENDING  = '2';
@@ -171,11 +172,46 @@ namespace sort
 
     /********************************
     *  Bucket Sort
+    *  Assume number is in range 0 ~ 99
     *  Time Complexity: 
     *  Space Complexity:
     ********************************/
-    void bucket_sort(int numbers[]) {
+    void bucket_sort(int numbers[], int size, int bucket_num, int bucket_max, const char mode = ASCENDING) {
+        int **buckets = (int**)malloc(bucket_num * sizeof(int*));
+        int *element_counts = (int*)malloc(bucket_num * sizeof(int));
 
+        for (int i = 0; i < bucket_num; i++) {
+            buckets[i] = (int*)malloc(bucket_max * sizeof(int));
+            element_counts[i] = 0;
+        }
+
+        // insert number into related bucket
+        int bucket_index;
+        for (int i = 0; i < size; i++) {
+            bucket_index = numbers[i] / bucket_num;
+            buckets[bucket_index][element_counts[bucket_index]] = numbers[i];
+            element_counts[bucket_index]++;
+        }
+
+        // sort each bucket
+        for (int i = 0; i < bucket_num; i++) {
+            merge_sort(buckets[i], 0, element_counts[i]-1, mode);
+        }
+
+        // merge each bucket
+        int offset = 0;
+        for (int i = 0; i < bucket_num; i++) {
+            memcpy(numbers + offset, buckets[i], element_counts[i] * sizeof(int));
+            offset += element_counts[i];
+        }
+
+        for (int i = 0; i < bucket_num; i++) {
+            free(buckets[i]);
+        }
+        free(element_counts);
+        free(buckets);
+
+        if (mode == DESCENDING) { reverse(numbers, size); }
     }
 
     /********************************
@@ -204,6 +240,10 @@ namespace sort
         case INSERTION_SORT:
             printf("insertion ");
             insertion_sort(numbers, size, mode);
+            break;
+        case BUCKET_SORT:
+            printf("bucket ");
+            bucket_sort(numbers, size, 10, 10, mode);
             break;
         default:
             printf("\nundefined sorting option: %c\n", mode);
@@ -246,6 +286,7 @@ int main() {
         printf(" 2: QUICK_SORT\n");
         printf(" 3: MERGE_SORT\n");
         printf(" 4: INSERTION_SORT\n");
+        printf(" 5: BUCKET_SORT\n");
         printf(" Enter a sorting algorithm: ");
         if (fgets(algo, MAX_INPUT_SIZE, stdin) != NULL) {
             size_t len = strlen(algo);
@@ -266,7 +307,7 @@ int main() {
                 }
             }
 
-            int numbers[] = {5, 3, 2, 7, 6, 8, 1, 4, 9, 0, 10,
+            int numbers[] = {50, 32, 28, 72, 61, 84, 18, 41, 99, 5, 35, 75, 79, 15, 43, 70, 66};
                             // 5, 3, 2, 7, 6, 8, 1, 4, 9, 0, 10,
                             // 5, 3, 2, 7, 6, 8, 1, 4, 9, 0, 10,
                             // 5, 3, 2, 7, 6, 8, 1, 4, 9, 0, 10,
@@ -276,7 +317,7 @@ int main() {
                             // 5, 3, 2, 7, 6, 8, 1, 4, 9, 0, 10,
                             // 5, 3, 2, 7, 6, 8, 1, 4, 9, 0, 10,
                             // 5, 3, 2, 7, 6, 8, 1, 4, 9, 0, 10,
-                            5, 3, 2, 7, 6, 8, 1, 4, 9, 0, 10 };
+                            // 52, 31, 20, 77, 64, 88, 11, 46, 93, 2, 99 };
             int size = sizeof(numbers) / sizeof(numbers[0]);
 
             printf("=============================\n");
