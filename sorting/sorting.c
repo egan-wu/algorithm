@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include "../heap/heap.h"
 
 #define MAX_INPUT_SIZE  10
 
@@ -12,6 +13,7 @@ namespace sort
     const char MERGE_SORT      = '3';
     const char INSERTION_SORT  = '4';
     const char BUCKET_SORT     = '5';
+    const char HEAP_SORT     = '6';
 
     const char ASCENDING   = '1';
     const char DESCENDING  = '2';
@@ -216,11 +218,15 @@ namespace sort
 
     /********************************
     *  Heap Sort
-    *  Time Complexity: 
-    *  Space Complexity:
+    *  Time Complexity: general O(nlog(n))
+    *  No extra space require
     ********************************/
-    void heap_sort(int numbers[]) {
-
+    void heap_sort(int numbers[], int size, const char mode = ASCENDING) {
+        for (int i = 0; i < size; i++) {
+            heap::build_heap(numbers, size - i);
+            swap(&numbers[0], &numbers[size-i-1]);
+        }
+        if (mode == DESCENDING) { reverse(numbers, size); }
     }
 
     void sort(int numbers[], int size, const char algo = QUICK_SORT, const char mode = ASCENDING) {
@@ -244,6 +250,10 @@ namespace sort
         case BUCKET_SORT:
             printf("bucket ");
             bucket_sort(numbers, size, 10, 10, mode);
+            break;
+        case HEAP_SORT:
+            printf("heap ");
+            heap_sort(numbers, size, mode);
             break;
         default:
             printf("\nundefined sorting option: %c\n", mode);
@@ -287,6 +297,7 @@ int main() {
         printf(" 3: MERGE_SORT\n");
         printf(" 4: INSERTION_SORT\n");
         printf(" 5: BUCKET_SORT\n");
+        printf(" 6: HEAP_SORT\n");
         printf(" Enter a sorting algorithm: ");
         if (fgets(algo, MAX_INPUT_SIZE, stdin) != NULL) {
             size_t len = strlen(algo);
