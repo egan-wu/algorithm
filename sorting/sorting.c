@@ -1,23 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
-#include "../heap/heap.h"
+#include "sorting.h"
 
 #define MAX_INPUT_SIZE  10
 
 namespace sort 
 {
-    const char BUBBLE_SORT     = '1';
-    const char QUICK_SORT      = '2';
-    const char MERGE_SORT      = '3';
-    const char INSERTION_SORT  = '4';
-    const char BUCKET_SORT     = '5';
-    const char HEAP_SORT     = '6';
-
-    const char ASCENDING   = '1';
-    const char DESCENDING  = '2';
-
     /********************************
      *  General function for sorting
      *  1) swap
@@ -51,7 +37,7 @@ namespace sort
     *  Time Complexity O(n^2)
     *  Not extra space require
     ********************************/
-    void bubble_sort(int numbers[], int size, char mode = ASCENDING ) {
+    void bubble_sort(int numbers[], int size, const char mode) {
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < i; ++j) {
                 if (numbers[i] < numbers[j]) {
@@ -85,7 +71,7 @@ namespace sort
         return (i + 1);
     }
 
-    void quick_sort(int numbers[], int low, int high, char mode = ASCENDING) {
+    void quick_sort(int numbers[], int low, int high, const char mode) {
         if (low < high) {
             int partition_location = partition(numbers, low, high);
             
@@ -137,7 +123,7 @@ namespace sort
         free(tmp2);
     }
 
-    void merge_sort(int numbers[], int left, int right, const char mode = ASCENDING) {
+    void merge_sort(int numbers[], int left, int right, const char mode) {
         if (left < right) {
             int mid = left + ((right - left) >> 1);
 
@@ -157,7 +143,7 @@ namespace sort
     *  Time Complexity: general O(n^2), best O(n), worst O(n^2)
     *  No extra space require
     ********************************/
-    void insertion_sort(int numbers[], int size, const char mode = ASCENDING) {
+    void insertion_sort(int numbers[], int size, const char mode) {
         if (size == 1) { return; }
 
         int j;
@@ -178,7 +164,7 @@ namespace sort
     *  Time Complexity: 
     *  Space Complexity:
     ********************************/
-    void bucket_sort(int numbers[], int size, int bucket_num, int bucket_max, const char mode = ASCENDING) {
+    void bucket_sort(int numbers[], int size, int bucket_num, int bucket_max, const char mode) {
         int **buckets = (int**)malloc(bucket_num * sizeof(int*));
         int *element_counts = (int*)malloc(bucket_num * sizeof(int));
 
@@ -221,7 +207,7 @@ namespace sort
     *  Time Complexity: general O(nlog(n))
     *  No extra space require
     ********************************/
-    void heap_sort(int numbers[], int size, const char mode = ASCENDING) {
+    void heap_sort(int numbers[], int size, const char mode) {
         for (int i = 0; i < size; i++) {
             heap::build_heap(numbers, size - i);
             swap(&numbers[0], &numbers[size-i-1]);
@@ -229,7 +215,7 @@ namespace sort
         if (mode == DESCENDING) { reverse(numbers, size); }
     }
 
-    void sort(int numbers[], int size, const char algo = QUICK_SORT, const char mode = ASCENDING) {
+    void sort(int numbers[], int size, const char algo, const char mode) {
         switch (algo) {
         case QUICK_SORT:
             printf("quick ");
